@@ -69,18 +69,25 @@ terraform apply
 
 ### `vnet_integration` Object
 
+Each subnet can belong to a **different VNet** (and resource group). Both are looked up independently via `data "azurerm_subnet"`.
+
 ```hcl
 vnet_integration = {
-  vnet_name                = "vnet-main"
-  vnet_resource_group_name = "rg-networking"
-  outbound_subnet_name     = "snet-functions-outbound"   # delegated to Microsoft.Web/serverFarms
-  inbound_subnet_name      = "snet-functions-inbound"    # source of allowed inbound traffic
+  outbound = {
+    vnet_name           = "vnet-main"
+    resource_group_name = "rg-networking"
+    subnet_name         = "snet-functions-outbound"  # delegated to Microsoft.Web/serverFarms
+  }
+  inbound = {
+    vnet_name           = "vnet-main"          # can be a different VNet
+    resource_group_name = "rg-networking"
+    subnet_name         = "snet-functions-inbound"   # source of allowed inbound traffic
+  }
 }
 ```
 
-The module looks up both subnets via `data "azurerm_subnet"` and uses them independently:
-- `outbound_subnet_name` – wired to the Function App's `virtual_network_subnet_id` so outbound traffic (e.g. calls to the Storage Account) routes privately through the VNet.
-- `inbound_subnet_name` – used in `ip_restriction` and `scm_ip_restriction` to allow only traffic originating from that subnet.
+- `outbound` – wired to the Function App's `virtual_network_subnet_id` so outbound traffic (e.g. calls to the Storage Account) routes privately through the VNet.
+- `inbound` – used in `ip_restriction` and `scm_ip_restriction` to allow only traffic originating from that subnet.
 
 ### Resources Created
 
@@ -108,14 +115,14 @@ The module looks up both subnets via `data "azurerm_subnet"` and uses them indep
 ### Outbound VNet Integration
 
 The Function App routes **outbound** traffic (including calls to the Storage
-Account) through the `outbound_subnet_name` subnet via `virtual_network_subnet_id`
+Account) through the `outbound.subnet_name` subnet via `virtual_network_subnet_id`
 on the `azurerm_linux_function_app` resource.  
 That subnet must have **service delegation** to `Microsoft.Web/serverFarms`.
 
 ### Inbound Restrictions
 
 The module configures `ip_restriction` and `scm_ip_restriction` in `site_config`
-to allow inbound traffic only from the `inbound_subnet_name` subnet. The default
+to allow inbound traffic only from the `inbound.subnet_name` subnet. The default
 action is **Deny**.
 
 > **Important:** Azure Functions always has a public endpoint

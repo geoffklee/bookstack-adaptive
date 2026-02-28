@@ -24,9 +24,15 @@ module "bookstack_adaptive" {
   output_auth_key    = var.output_auth_key
 
   vnet_integration = {
-    vnet_name                = var.vnet_name
-    vnet_resource_group_name = var.vnet_resource_group_name
-    outbound_subnet_name     = var.outbound_subnet_name
-    inbound_subnet_name      = var.inbound_subnet_name
+    outbound = {
+      vnet_name           = var.outbound_vnet_name
+      resource_group_name = var.outbound_vnet_resource_group_name
+      subnet_name         = var.outbound_subnet_name
+    }
+    inbound = {
+      vnet_name           = var.inbound_vnet_name
+      resource_group_name = var.inbound_vnet_resource_group_name
+      subnet_name         = var.inbound_subnet_name
+    }
   }
 }

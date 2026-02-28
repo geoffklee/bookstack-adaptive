@@ -14,15 +14,15 @@ locals {
 # ---------------------------------------------------------------------------
 
 data "azurerm_subnet" "outbound" {
-  name                 = var.vnet_integration.outbound_subnet_name
-  virtual_network_name = var.vnet_integration.vnet_name
-  resource_group_name  = var.vnet_integration.vnet_resource_group_name
+  name                 = var.vnet_integration.outbound.subnet_name
+  virtual_network_name = var.vnet_integration.outbound.vnet_name
+  resource_group_name  = var.vnet_integration.outbound.resource_group_name
 }
 
 data "azurerm_subnet" "inbound" {
-  name                 = var.vnet_integration.inbound_subnet_name
-  virtual_network_name = var.vnet_integration.vnet_name
-  resource_group_name  = var.vnet_integration.vnet_resource_group_name
+  name                 = var.vnet_integration.inbound.subnet_name
+  virtual_network_name = var.vnet_integration.inbound.vnet_name
+  resource_group_name  = var.vnet_integration.inbound.resource_group_name
 }
 
 # ---------------------------------------------------------------------------

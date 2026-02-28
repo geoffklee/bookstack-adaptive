@@ -26,18 +26,28 @@ variable "output_auth_key" {
   default     = ""
 }
 
-variable "vnet_name" {
-  description = "Name of the Virtual Network containing the integration and inbound subnets."
+variable "outbound_vnet_name" {
+  description = "Name of the VNet containing the outbound subnet (delegated to Microsoft.Web/serverFarms)."
   type        = string
 }
 
-variable "vnet_resource_group_name" {
-  description = "Resource group containing the Virtual Network."
+variable "outbound_vnet_resource_group_name" {
+  description = "Resource group of the VNet containing the outbound subnet."
   type        = string
 }
 
 variable "outbound_subnet_name" {
-  description = "Subnet delegated to Microsoft.Web/serverFarms used for outbound VNet integration (e.g. reaching the Storage Account privately)."
+  description = "Subnet name used for outbound VNet integration (Function App to Storage Account)."
+  type        = string
+}
+
+variable "inbound_vnet_name" {
+  description = "Name of the VNet containing the inbound subnet. May differ from the outbound VNet."
+  type        = string
+}
+
+variable "inbound_vnet_resource_group_name" {
+  description = "Resource group of the VNet containing the inbound subnet."
   type        = string
 }
 

@@ -32,14 +32,20 @@ variable "output_auth_key" {
 }
 
 variable "vnet_integration" {
-  description = "VNet integration and inbound-restriction configuration."
+  description = "VNet integration and inbound-restriction configuration. Each subnet reference can belong to a different VNet."
   type = object({
-    vnet_name                = string
-    vnet_resource_group_name = string
-    # Subnet delegated to Microsoft.Web/serverFarms – used for outbound VNet
-    # integration so the Function App can reach the Storage Account privately.
-    outbound_subnet_name = string
-    # Subnet whose traffic is allowed inbound to the Function App and SCM endpoints.
-    inbound_subnet_name = string
+    # Outbound: subnet delegated to Microsoft.Web/serverFarms through which the
+    # Function App reaches the Storage Account (and other private resources).
+    outbound = object({
+      vnet_name           = string
+      resource_group_name = string
+      subnet_name         = string
+    })
+    # Inbound: subnet whose traffic is allowed into the Function App and SCM endpoints.
+    inbound = object({
+      vnet_name           = string
+      resource_group_name = string
+      subnet_name         = string
+    })
   })
 }
