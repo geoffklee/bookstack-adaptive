@@ -1,0 +1,16 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# Never commit terraform.tfvars to source control.
+
+prefix              = "bsa-prod"
+resource_group_name = "rg-bookstack-adaptive"
+location            = "eastus"
+
+# Sensitive values – supply via environment variables or a secrets manager:
+#   export TF_VAR_output_webhook_url="https://hooks.example.com/..."
+#   export TF_VAR_output_auth_key="supersecret"
+output_webhook_url = ""
+output_auth_key    = ""
+
+vnet_name                = "vnet-main"
+vnet_resource_group_name = "rg-networking"
+subnet_name              = "snet-functions"
