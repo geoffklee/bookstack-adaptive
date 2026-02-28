@@ -13,8 +13,14 @@ locals {
 # Data sources
 # ---------------------------------------------------------------------------
 
-data "azurerm_subnet" "vnet_integration" {
-  name                 = var.vnet_integration.subnet_name
+data "azurerm_subnet" "outbound" {
+  name                 = var.vnet_integration.outbound_subnet_name
+  virtual_network_name = var.vnet_integration.vnet_name
+  resource_group_name  = var.vnet_integration.vnet_resource_group_name
+}
+
+data "azurerm_subnet" "inbound" {
+  name                 = var.vnet_integration.inbound_subnet_name
   virtual_network_name = var.vnet_integration.vnet_name
   resource_group_name  = var.vnet_integration.vnet_resource_group_name
 }
@@ -83,8 +89,9 @@ resource "azurerm_linux_function_app" "main" {
   storage_account_name       = azurerm_storage_account.main.name
   storage_account_access_key = azurerm_storage_account.main.primary_access_key
 
-  # Outbound VNet integration routes function traffic through the subnet.
-  virtual_network_subnet_id = data.azurerm_subnet.vnet_integration.id
+  # Outbound VNet integration routes function traffic (e.g. to Storage Account)
+  # through the designated outbound subnet.
+  virtual_network_subnet_id = data.azurerm_subnet.outbound.id
 
   app_settings = {
     OUTPUT_WEBHOOK_URL                    = var.output_webhook_url
@@ -100,22 +107,22 @@ resource "azurerm_linux_function_app" "main" {
       python_version = "3.13"
     }
 
-    # Inbound restriction: allow only traffic from the designated subnet.
+    # Inbound restriction: allow only traffic from the inbound subnet.
     ip_restriction_default_action = "Deny"
 
     ip_restriction {
-      name                       = "allow-vnet-subnet"
-      virtual_network_subnet_id  = data.azurerm_subnet.vnet_integration.id
+      name                       = "allow-inbound-subnet"
+      virtual_network_subnet_id  = data.azurerm_subnet.inbound.id
       action                     = "Allow"
       priority                   = 100
     }
 
-    # Lock SCM (Kudu) to the same subnet.
+    # Lock SCM (Kudu) to the same inbound subnet.
     scm_ip_restriction_default_action = "Deny"
 
     scm_ip_restriction {
-      name                       = "allow-vnet-subnet-scm"
-      virtual_network_subnet_id  = data.azurerm_subnet.vnet_integration.id
+      name                       = "allow-inbound-subnet-scm"
+      virtual_network_subnet_id  = data.azurerm_subnet.inbound.id
       action                     = "Allow"
       priority                   = 100
     }

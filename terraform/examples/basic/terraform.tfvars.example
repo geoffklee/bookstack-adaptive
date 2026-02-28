@@ -13,4 +13,5 @@ output_auth_key    = ""
 
 vnet_name                = "vnet-main"
 vnet_resource_group_name = "rg-networking"
-subnet_name              = "snet-functions"
+outbound_subnet_name     = "snet-functions-outbound"
+inbound_subnet_name      = "snet-functions-inbound"

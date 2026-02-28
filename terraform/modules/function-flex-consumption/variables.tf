@@ -36,6 +36,10 @@ variable "vnet_integration" {
   type = object({
     vnet_name                = string
     vnet_resource_group_name = string
-    subnet_name              = string
+    # Subnet delegated to Microsoft.Web/serverFarms – used for outbound VNet
+    # integration so the Function App can reach the Storage Account privately.
+    outbound_subnet_name = string
+    # Subnet whose traffic is allowed inbound to the Function App and SCM endpoints.
+    inbound_subnet_name = string
   })
 }

@@ -27,7 +27,7 @@ variable "output_auth_key" {
 }
 
 variable "vnet_name" {
-  description = "Name of the Virtual Network for VNet integration and inbound restrictions."
+  description = "Name of the Virtual Network containing the integration and inbound subnets."
   type        = string
 }
 
@@ -36,7 +36,12 @@ variable "vnet_resource_group_name" {
   type        = string
 }
 
-variable "subnet_name" {
-  description = "Name of the subnet to use for VNet integration and inbound restrictions."
+variable "outbound_subnet_name" {
+  description = "Subnet delegated to Microsoft.Web/serverFarms used for outbound VNet integration (e.g. reaching the Storage Account privately)."
+  type        = string
+}
+
+variable "inbound_subnet_name" {
+  description = "Subnet whose traffic is allowed inbound to the Function App and SCM endpoints."
   type        = string
 }
